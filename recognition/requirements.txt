@@ -1,0 +1,16 @@
+Flask
+opencv-python
+scikit-image
+tqdm
+Pillow
+thop
+ninja
+tabulate
+tensorboard
+circuitbreaker
+requests
+requests-mock
+loguru
+pycocotools
+protobuf==3.19.1
+rq

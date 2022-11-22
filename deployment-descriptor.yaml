@@ -1,0 +1,124 @@
+{
+  "sla_version" : "v2.0",
+  "customerID" : "Admin",
+  "applications" : [
+    {
+      "applicationID" : "",
+      "application_name" : "pipeline",
+      "application_namespace" : "sigcomm",
+      "application_desc" : "Demo pipeline",
+      "microservices" : [
+        {
+          "microserviceID": "",
+          "microservice_name": "PreEdge",
+          "microservice_namespace": "deploy",
+          "virtualization": "container",
+          "cmd": ["./pre/main", "-port", "5001", "-obj", "10.30.10.10:10501", "-x","200","-y","100"],
+          "memory": 50,
+          "vcpus": 1,
+          "vgpus": 0,
+          "vtpus": 0,
+          "bandwidth_in": 0,
+          "bandwidth_out": 0,
+          "storage": 0,
+          "code": "docker.io/giobart/demo-pipeline:pre.light.arm",
+          "state": "",
+          "port": "5001:5001/tcp",
+          "constraints":[
+                {
+                  "type":"direct",
+                  "node":"pi1;pi2",
+                  "cluster":"gpu"
+                }
+          ],
+          "connectivity": [],
+          "added_files": []
+        },
+        {
+          "microserviceID": "",
+          "microservice_name": "PreCloud",
+          "microservice_namespace": "deploy",
+          "virtualization": "container",
+          "cmd": ["./pre/main", "-port", "5001", "-obj", "10.30.10.10:10501", "-x","200","-y","100"],
+          "memory": 50,
+          "vcpus": 1,
+          "vgpus": 0,
+          "vtpus": 0,
+          "bandwidth_in": 0,
+          "bandwidth_out": 0,
+          "storage": 0,
+          "code": "docker.io/giobart/demo-pipeline:pre.light.amd",
+          "state": "",
+          "port": "5001:5001/tcp",
+          "constraints":[
+                {
+                  "type":"direct",
+                  "node":"ip-172-31-8-163",
+                  "cluster":"aws"
+                }
+          ],
+          "connectivity": [],
+          "added_files": []
+        },
+        {
+          "microserviceID": "",
+          "microservice_name": "Obj",
+          "microservice_namespace": "deploy",
+          "virtualization": "container",
+          "cmd": ["python3","detection.py","--recognition-address","10.30.10.20:10502","--entrypoint","0.0.0.0:10501","--model","yolox_nano","--max-latency","0.1","--recovery-timeout","1"],
+          "memory": 100,
+          "vcpus": 1,
+          "vgpus": 2,
+          "vtpus": 0,
+          "bandwidth_in": 0,
+          "bandwidth_out": 0,
+          "storage": 0,
+          "code": "docker.io/giobart/demo-pipeline:detection",
+          "state": "",
+          "port": "",
+          "addresses": {
+            "rr_ip": "10.30.10.10"
+          },
+          "constraints":[
+                {
+                  "type":"direct",
+                  "node":"xavier1;xavier2",
+                  "cluster":"gpu"
+                }
+          ],
+          "connectivity": [],
+          "added_files": []
+        },
+        {
+          "microserviceID": "",
+          "microservice_name": "Rec",
+          "microservice_namespace": "deploy",
+          "virtualization": "container",
+          "cmd": ["python3","recognition.py","--entrypoint","0.0.0.0:10502"],
+          "memory": 100,
+          "vcpus": 1,
+          "vgpus": 2,
+          "vtpus": 0,
+          "bandwidth_in": 0,
+          "bandwidth_out": 0,
+          "storage": 0,
+          "code": "docker.io/giobart/demo-pipeline:recognition",
+          "state": "",
+          "port": "",
+          "addresses": {
+            "rr_ip": "10.30.10.20"
+          },
+          "constraints":[
+                {
+                  "type":"direct",
+                  "node":"xavier1;xavier2",
+                  "cluster":"gpu"
+                }
+          ],
+          "connectivity": [],
+          "added_files": []
+        }
+      ]
+    }
+  ]
+}
