@@ -51,7 +51,7 @@ POST the following deployment descriptor using Oakestra `/api/application/` endp
           "cmd": ["python3","detection.py","--recognition-address","10.30.10.20:10502","--entrypoint","0.0.0.0:10501","--model","yolox_nano","--max-latency","0.1","--recovery-timeout","1"],
           "memory": 100,
           "vcpus": 1,
-          "vgpus": 1,
+          "vgpus": 0,
           "vtpus": 0,
           "bandwidth_in": 0,
           "bandwidth_out": 0,
