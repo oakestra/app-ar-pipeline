@@ -1,1 +1,2 @@
-go run main.go -entry 192.168.0.106:5001 -backupentry 192.168.0.104:5001 -bbps 3 -latency true
+go run main.go -entry=<server IP> -serverport=50100 -bbps=3 -latency=true -camera=1
+

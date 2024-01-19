@@ -11,88 +11,52 @@ This is an AR pipeline composed of 3 microservices.
 
 # How to deploy the pipeline using oakestra
 
-POST the following deployment descriptor using Oakestra `/api/application/` endpoint:
+Upload `sla.json` to Oak dashboard as follows:
 
-```
-{
-  "sla_version" : "v2.0",
-  "customerID" : "Admin",
-  "applications" : [
-    {
-      "applicationID" : "",
-      "application_name" : "pipeline",
-      "application_namespace" : "example",
-      "application_desc" : "Demo pipeline",
-      "microservices" : [
-        {
-          "microserviceID": "",
-          "microservice_name": "Pre",
-          "microservice_namespace": "deploy",
-          "virtualization": "container",
-          "cmd": ["./pre/main", "-port", "5001", "-obj", "10.30.10.10:10501", "-x","200","-y","100"],
-          "memory": 50,
-          "vcpus": 1,
-          "vgpus": 0,
-          "vtpus": 0,
-          "bandwidth_in": 0,
-          "bandwidth_out": 0,
-          "storage": 0,
-          "code": "docker.io/giobart/demo-pipeline:preprocessing",
-          "state": "",
-          "port": "5001:5001/tcp",
-          "connectivity": [],
-          "added_files": []
-        },
-        {
-          "microserviceID": "",
-          "microservice_name": "Obj",
-          "microservice_namespace": "deploy",
-          "virtualization": "container",
-          "cmd": ["python3","detection.py","--recognition-address","10.30.10.20:10502","--entrypoint","0.0.0.0:10501","--model","yolox_nano","--max-latency","0.1","--recovery-timeout","1"],
-          "memory": 100,
-          "vcpus": 1,
-          "vgpus": 0,
-          "vtpus": 0,
-          "bandwidth_in": 0,
-          "bandwidth_out": 0,
-          "storage": 0,
-          "code": "docker.io/giobart/demo-pipeline:detection",
-          "state": "",
-          "port": "",
-          "addresses": {
-            "rr_ip": "10.30.10.10"
-          },
-          "connectivity": [],
-          "added_files": []
-        },
-        {
-          "microserviceID": "",
-          "microservice_name": "Rec",
-          "microservice_namespace": "deploy",
-          "virtualization": "container",
-          "cmd": ["python3","recognition.py","--entrypoint","0.0.0.0:10502"],
-          "memory": 100,
-          "vcpus": 1,
-          "vgpus": 1,
-          "vtpus": 0,
-          "bandwidth_in": 0,
-          "bandwidth_out": 0,
-          "storage": 0,
-          "code": "docker.io/giobart/demo-pipeline:recognition",
-          "state": "",
-          "port": "",
-          "addresses": {
-            "rr_ip": "10.30.10.20"
-          },
-          "connectivity": [],
-          "added_files": []
-        }
-      ]
-    }
-  ]
-}
 
+### Step 1: Upload the SLA
+Let's create a new service with:
+
+![image](img/create.png)
+
+And let's use the SLA panel to uploade our `sla.json` file
+
+![image](img/sla.png)
+
+Select `sla.json` and hit the upload config button. 
+
+### Step 2: Deploy Pre, Obj and Rec
+
+Use the deploy button for each service, use click the deploy all button. 
+![image](img/deploy.png)
+
+The target machine will download and execute the images. This operation might take time.
+
+### Step 3: Monitoring
+
+When all services show the running status, check for the service details of Pre using the `Instance details` button.
+![image](img/running.png)
+
+Note down the `Node IP` address.
+
+### Step 4: Run the client
+
+0. Move to the machine you're willing to use as client, and make sure the `Node IP` from Step 3 can be reached from this machine. 
+
+1. Clone and navigate to the `client` folder of this repository. 
+
+2. Make sure you have a working installation of GoLang. Check it out using the command `go version`
+
+3. Make sure you have OpenCV 4.5.5 installed on your machine
+
+4. Install client dependencies with `go get -u`
+
+5. Run your client with the following command. 
 ```
+go run main.go -entry=<Node IP> -serverport=50100 -bbps=3 -latency=true
+```
+
+Replace `Node IP` with the one from Step 3. 
 
 ## Please note the following:
 
@@ -100,21 +64,6 @@ POST the following deployment descriptor using Oakestra `/api/application/` endp
 
 -----> Recognition is a very heavyweight service. The current image does not exploit cuda capabilities. If your hardware is not bulky enough try first only deploying pre and obj 
 
-# Test the pipeline
-
-To test the pipeline use the client inside the `client` folder.
-
-1. Make sure the machine where Pre is stored and the machine you use to deploy the client are mutually reachable. In particular port `5001/tcp` for the server machine and port `40100/tcp` for the client machine. 
-  
-2. Make sure you have a working installation of GoLang. Check it out using the command `go version`
-
-3. Make sure you have OpenCV 4.5.5 installed on your machine
-
-4. Install client dependencies with `go get -u`
-
-5. Run the client using: `go run main.go -entry <ip-of-preprocessing-host>:5001`
-
-6. Use `go run main.go -h` for extra client parameters
 
 
 
