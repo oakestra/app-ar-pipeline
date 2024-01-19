@@ -1,0 +1,80 @@
+{
+  "microservices": [
+    {
+      "microserviceID": "",
+      "microservice_name": "Pre",
+      "microservice_namespace": "deploy",
+      "virtualization": "container",
+      "cmd": [
+        "sh",
+        "-c",
+        "./pre/main -port 4040 -x 500 -y 500 & /home/SidecarQueue -entry=true -exit=false -p=50100 -next=10.30.20.11:50101 -sidecar=0.0.0.0:4040 -analytics=1"
+      ],
+      "memory": 50,
+      "vcpus": 1,
+      "vgpus": 0,
+      "vtpus": 0,
+      "bandwidth_in": 0,
+      "bandwidth_out": 0,
+      "storage": 0,
+      "code": "ghcr.io/giobart/preprocessing:v0.0.5",
+      "state": "",
+      "port": "50100:50100/udp",
+      "connectivity": [],
+      "added_files": []
+    },
+    {
+      "microserviceID": "",
+      "microservice_name": "Det",
+      "microservice_namespace": "deploy",
+      "virtualization": "container",
+      "cmd": [
+        "sh",
+        "-c",
+        "/home/SidecarQueue -exit=true -p=50101 -sidecar=0.0.0.0:4041 -next=10.30.20.20:50102 -analytics=1 & python3 detection.py --model yolox_nano"
+      ],
+      "memory": 50,
+      "vcpus": 1,
+      "vgpus": 0,
+      "vtpus": 0,
+      "bandwidth_in": 0,
+      "bandwidth_out": 0,
+      "storage": 0,
+      "code": "ghcr.io/giobart/detection:v0.0.5",
+      "state": "",
+      "port": "",
+      "addresses": {
+        "rr_ip": "10.30.20.11"
+      },
+      "connectivity": [],
+      "added_files": []
+    },
+    {
+      "microserviceID": "",
+      "microservice_name": "Rec",
+      "microservice_namespace": "deploy",
+      "virtualization": "container",
+      "cmd": [
+        "sh",
+        "-c",
+        "./SidecarQueue -exit=true -p=50102 -sidecar=0.0.0.0:4042 -analytics=1 & python3 recognition.py --model buffalo_s"
+      ],
+      "memory": 50,
+      "vcpus": 1,
+      "vgpus": 1,
+      "vtpus": 0,
+      "bandwidth_in": 0,
+      "bandwidth_out": 0,
+      "storage": 0,
+      "code": "ghcr.io/giobart/recognition:v0.0.5",
+      "state": "",
+      "port": "",
+      "addresses": {
+        "rr_ip": "10.30.20.20"
+      },
+      "connectivity": [],
+      "added_files": []
+    }
+  ]
+}
+
